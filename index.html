@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reflexive Vault - Self-Defending AI Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .trust-score {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .trust-healthy {
+            color: #10b981;
+        }
+        .trust-compromised {
+            color: #ef4444;
+        }
+        .trust-label {
+            text-align: center;
+            color: #666;
+            margin-top: 5px;
+        }
+        .agent-id {
+            font-family: monospace;
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+        .chat-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .chat-history {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .question {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: inline-block;
+            max-width: 80%;
+        }
+        .answer {
+            background: #e5e7eb;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            margin-left: auto;
+            max-width: 80%;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .input-group button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .input-group button:hover {
+            background: #5a67d8;
+        }
+        .audit-log {
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .audit-entry {
+            padding: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .timestamp {
+            color: #6b7280;
+            font-size: 0.7rem;
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reflexive Vault</h1>
+            <p>Self-Defending AI Agent with Cryptographic Identity and Immune System</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>Agent Identity</h3>
+                <div class="agent-id">{{ agent_id }}</div>
+                <p style="margin-top: 10px; color: #666; font-size: 0.8rem;">Ed25519 cryptographic key pair</p>
+            </div>
+
+            <div class="card">
+                <h3>Trust Score (Immune System)</h3>
+                <div class="trust-score">
+                    <span class="trust-{{ 'healthy' if trust_score >= 70 else 'compromised' }}">
+                        {{ trust_score }}/100
+                    </span>
+                </div>
+                <div class="trust-label">Status: {{ trust_status }}</div>
+                <p style="margin-top: 10px; color: #666; font-size: 0.8rem;">
+                    Score decreases with anomalous behavior
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Activity Summary</h3>
+                <p>Total Actions: {{ total_actions }}</p>
+                <p>Agent Type: Self-Defending</p>
+                <p>AI Model: Free (NVIDIA via ClawRouter)</p>
+                <p>Auth Method: Agent-Native (No OAuth)</p>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <h3>Ask Your Agent</h3>
+            {% if last_question %}
+            <div class="chat-history">
+                <div class="question">
+                    <strong>You:</strong> {{ last_question }}
+                </div>
+                <div class="answer">
+                    <strong>Agent:</strong> {{ last_answer }}
+                </div>
+            </div>
+            {% endif %}
+            
+            <form method="post" action="/ask" class="input-group">
+                <input type="text" name="question" placeholder="Ask me anything..." required>
+                <button type="submit">Ask</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Audit Log (Tamper-Evident)</h3>
+            <div class="audit-log">
+                {% for log in audit_logs %}
+                <div class="audit-entry">
+                    <span class="timestamp">{{ log.timestamp[:19] }}</span>
+                    <strong>{{ log.action }}</strong>
+                    <span style="color: {% if log.outcome == 'success' %}green{% elif log.outcome == 'failed' %}red{% else %}orange{% endif %}">
+                        [{{ log.outcome }}]
+                    </span>
+                    <span style="color: #666; font-size: 0.75rem;">{{ log.target[:40] }}</span>
+                </div>
+                {% endfor %}
+                {% if not audit_logs %}
+                <p style="color: #666;">No actions logged yet. Ask a question to see audit entries.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Reflexive Vault | Agent-Native Authentication | Zero Trust | Zero Cost</p>
+            <p style="font-size: 0.8rem;">Cryptographic Identity | Dynamic Trust Scoring | Complete Audit Logging</p>
+        </div>
+    </div>
+</body>
+</html>

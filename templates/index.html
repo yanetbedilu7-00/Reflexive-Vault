@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reflexive Vault Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .trust-good {
+            color: #28a745;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .trust-bad {
+            color: #dc3545;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .answer {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+        }
+        .audit-log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reflexive Vault Agent</h1>
+    <p>Self-Defending AI Agent with Cryptographic Identity</p>
+
+    <div class="card">
+        <h2>Agent Status</h2>
+        <p><strong>Agent ID:</strong> {{ agent_id }}</p>
+        <p><strong>Trust Score:</strong> <span class="trust-good">{{ trust_score }}/100</span></p>
+        <p><strong>Status:</strong> {{ trust_status }}</p>
+        <p><strong>Total Actions:</strong> {{ total_actions }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Ask Your Agent</h2>
+        <form method="post" action="/ask">
+            <input type="text" name="question" placeholder="Type your question here..." required>
+            <button type="submit">Ask</button>
+        </form>
+
+        {% if last_answer %}
+        <div class="answer">
+            <strong>You asked:</strong> {{ last_question }}<br><br>
+            <strong>Agent Response:</strong> {{ last_answer }}
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="answer error">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Audit Log</h3>
+        <div class="audit-log">
+            {% for log in audit_logs %}
+            <p><strong>{{ log.timestamp[:19] }}</strong> - {{ log.action }} [{{ log.outcome }}]</p>
+            {% endfor %}
+            {% if not audit_logs %}
+            <p>No actions logged yet. Ask a question to see audit entries.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

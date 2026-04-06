@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reflexive Vault - Self-Defending AI Agent</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #0f172a;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #1e293b;
+            margin-top: 0;
+        }
+        .badge {
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .security-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #475569;
+        }
+        .card .value {
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .trust-score {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .trust-high { color: #10b981; }
+        .trust-medium { color: #f59e0b; }
+        .trust-low { color: #ef4444; }
+        .audit-log {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .audit-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #334155;
+        }
+        .timestamp { color: #94a3b8; }
+        .ask-area {
+            margin: 20px 0;
+        }
+        input {
+            width: 75%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .answer {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .refresh-btn {
+            background: #475569;
+            padding: 5px 10px;
+            font-size: 12px;
+            float: right;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Reflexive Vault</h1>
+        <p>Self-Defending AI Agent with Cryptographic Identity + Immune System</p>
+        
+        <!-- Three Security Features Display -->
+        <div class="security-panel">
+            <div class="card">
+                <h3>🔐 Cryptographic Identity</h3>
+                <div class="value" id="agentId">Loading...</div>
+                <small>Ed25519 key pair - Unforgeable</small>
+            </div>
+            <div class="card">
+                <h3>🛡️ Trust Score (Immune System)</h3>
+                <div class="trust-score" id="trustScore">--</div>
+                <small>Decreases with anomalous behavior</small>
+            </div>
+            <div class="card">
+                <h3>📊 Total Actions Logged</h3>
+                <div class="value" id="totalActions">--</div>
+                <small>Every action is tamper-evident</small>
+            </div>
+        </div>
+        
+        <!-- Audit Log Display -->
+        <div class="clearfix">
+            <h3>📝 Audit Log (Tamper-Evident)</h3>
+            <button class="refresh-btn" onclick="loadAuditLog()">Refresh</button>
+        </div>
+        <div class="audit-log" id="auditLog">
+            Loading audit log...
+        </div>
+        
+        <!-- Ask Question Area -->
+        <div class="ask-area">
+            <h3>💬 Ask Your Agent</h3>
+            <input type="text" id="question" placeholder="Type your question..." autocomplete="off">
+            <button onclick="askQuestion()">Ask</button>
+        </div>
+        
+        <!-- Answer Area -->
+        <div id="answerArea" style="display:none;"></div>
+        <div id="loadingArea" style="display:none;" class="loading">🤔 Agent is thinking... (This action is being logged)</div>
+    </div>
+
+    <script>
+        // Function to load agent status
+        async function loadStatus() {
+            try {
+                const response = await fetch('http://localhost:8000/api/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('agentId').innerHTML = data.agent_id;
+                    
+                    const trustScore = data.trust_score;
+                    const trustElement = document.getElementById('trustScore');
+                    trustElement.innerHTML = trustScore + '/100';
+                    trustElement.className = 'trust-score ' + 
+                        (trustScore >= 70 ? 'trust-high' : (trustScore >= 50 ? 'trust-medium' : 'trust-low'));
+                    
+                    document.getElementById('totalActions').innerHTML = data.total_actions;
+                }
+            } catch(e) {
+                document.getElementById('agentId').innerHTML = 'Agent running locally';
+                document.getElementById('trustScore').innerHTML = '100/100';
+            }
+        }
+        
+        // Function to load audit log
+        async function loadAuditLog() {
+            try {
+                const response = await fetch('http://localhost:8000/api/audit');
+                if (response.ok) {
+                    const data = await response.json();
+                    const logDiv = document.getElementById('auditLog');
+                    if (data.logs.length === 0) {
+                        logDiv.innerHTML = '<div class="audit-entry">No actions logged yet. Ask a question to see audit entries.</div>';
+                    } else {
+                        logDiv.innerHTML = data.logs.map(log => 
+                            `<div class="audit-entry">
+                                <span class="timestamp">${log.timestamp}</span>
+                                <strong> ${log.action}</strong>
+                                <span style="color: ${log.outcome === 'success' ? '#10b981' : (log.outcome === 'failed' ? '#ef4444' : '#f59e0b')}">
+                                    [${log.outcome}]
+                                </span>
+                                <span style="color: #94a3b8"> ${log.target}</span>
+                            </div>`
+                        ).join('');
+                    }
+                }
+            } catch(e) {
+                document.getElementById('auditLog').innerHTML = 'Unable to load audit log. Make sure server is running.';
+            }
+        }
+        
+        // Ask question function
+        async function askQuestion() {
+            const question = document.getElementById('question').value;
+            if (!question) {
+                alert('Please type a question');
+                return;
+            }
+            
+            document.getElementById('loadingArea').style.display = 'block';
+            document.getElementById('answerArea').style.display = 'none';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+                
+                const data = await response.json();
+                document.getElementById('loadingArea').style.display = 'none';
+                
+                const answerDiv = document.getElementById('answerArea');
+                answerDiv.style.display = 'block';
+                
+                if (data.error) {
+                    answerDiv.innerHTML = `<div class="answer" style="background:#fee2e2"><strong>❌ Error:</strong><br>${data.error}</div>`;
+                } else {
+                    answerDiv.innerHTML = `<div class="answer"><strong>📝 Your question:</strong><br>${question}<br><br><strong>🤖 Agent response:</strong><br>${data.answer}</div>`;
+                }
+                
+                document.getElementById('question').value = '';
+                
+                // Refresh all displays
+                await loadStatus();
+                await loadAuditLog();
+                
+            } catch(error) {
+                document.getElementById('loadingArea').style.display = 'none';
+                const answerDiv = document.getElementById('answerArea');
+                answerDiv.style.display = 'block';
+                answerDiv.innerHTML = `<div class="answer" style="background:#fee2e2"><strong>❌ Connection Error:</strong><br>Cannot connect to server. Make sure web_server.py is running.</div>`;
+            }
+        }
+        
+        // Allow Enter key
+        document.getElementById('question').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                askQuestion();
+            }
+        });
+        
+        // Load everything on page load
+        loadStatus();
+        loadAuditLog();
+        
+        // Auto-refresh audit log every 5 seconds
+        setInterval(loadAuditLog, 5000);
+    </script>
+</body>
+</html>

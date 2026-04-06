@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+openai
+auth0-python
+python-dotenv
+requests
