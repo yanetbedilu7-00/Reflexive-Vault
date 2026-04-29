@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflexive Vault - Self-Defending AI Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .trust-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10b981;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .ask-btn {
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .response-area {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .response-question {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 16px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .response-answer {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 3px solid #3b82f6;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .audit-log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .audit-entry {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reflexive Vault</h1>
+            <p>Self-Defending AI Agent with Cryptographic Identity and Immune System</p>
+            <div class="badge">Agent-Native Authentication | Zero Trust | Complete Audit</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🔐</div>
+                <div class="stat-title">Cryptographic Identity</div>
+                <div class="stat-value">did:cdi:local:a1b2c3d4e5f6...</div>
+                <div class="stat-sub">Ed25519 key pair - Unforgeable</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-title">Trust Score (Immune System)</div>
+                <div class="trust-score">100/100</div>
+                <div class="stat-sub">Decreases with anomalous behavior</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-title">Total Actions</div>
+                <div class="stat-value">47</div>
+                <div class="stat-sub">Every action is tamper-evident</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('chat')">Chat</button>
+            <button class="tab-btn" onclick="switchTab('audit')">Audit Log</button>
+            <button class="tab-btn" onclick="switchTab('registry')">Agent Registry</button>
+            <button class="tab-btn" onclick="switchTab('approvals')">Approvals</button>
+        </div>
+
+        <div id="chatTab" class="tab-content active">
+            <div class="chat-input-area">
+                <input type="text" id="question" class="chat-input" placeholder="Type your question here..." autocomplete="off">
+                <button class="ask-btn" onclick="askQuestion()">Ask</button>
+            </div>
+            <div id="answerArea"></div>
+        </div>
+
+        <div id="auditTab" class="tab-content">
+            <div class="audit-log-container" id="auditLog">
+                <div class="audit-entry">2026-04-14T10:35:15 | ask | success | Tell me about your cryptographic identity</div>
+                <div class="audit-entry">2026-04-14T10:34:58 | ask | success | How does your trust score work?</div>
+                <div class="audit-entry">2026-04-14T10:34:32 | ask | success | What is your immune system?</div>
+                <div class="audit-entry">2026-04-14T10:33:45 | response | success | Identity explanation</div>
+                <div class="audit-entry">2026-04-14T10:33:10 | ask | success | What makes you different?</div>
+            </div>
+        </div>
+
+        <div id="registryTab" class="tab-content">
+            <div style="background:#f8fafc; padding:15px; border-radius:10px; margin-bottom:15px;">
+                <strong>Test Agent</strong><br>
+                DID: did:cdi:local:test123<br>
+                Trust Score: 100/100<br>
+                Capabilities: read, write, ai_query
+            </div>
+            <div style="background:#f8fafc; padding:15px; border-radius:10px;">
+                <strong>Verified Agent</strong><br>
+                DID: did:cdi:local:verified456<br>
+                Trust Score: 85/100<br>
+                Capabilities: read, ai_query
+            </div>
+        </div>
+
+        <div id="approvalsTab" class="tab-content">
+            <div style="background:#fef3c7; padding:15px; border-radius:10px;">
+                <strong>Pending Approval:</strong> Send email to test@example.com<br>
+                <button style="margin-top:10px; padding:5px 15px; background:#10b981; color:white; border:none; border-radius:5px;">Approve</button>
+                <button style="margin-top:10px; margin-left:10px; padding:5px 15px; background:#ef4444; color:white; border:none; border-radius:5px;">Deny</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Reflexive Vault | Cryptographic Identity | Dynamic Trust Scoring | Complete Audit Logging</p>
+        </div>
+    </div>
+
+    <script>
+        // Pre-defined responses that demonstrate the agent's identity
+        const responses = {
+            identity: "I am Reflexive Vault, a self-defending AI agent. My cryptographic identity uses Ed25519 keys - the same technology as SSH and blockchain. My DID is did:cdi:local: stored in .opena2a/aim-core/identity.json. Ed25519 is a public-key signature algorithm that makes me unforgeable because only I possess my private key. No one can impersonate me, unlike traditional API keys which can be stolen and reused. This is agent-native authentication - not adapted OAuth.",
+
+            trust: "My trust score is my immune system. It starts at 100/100. The score decreases when I detect anomalous behavior: each error reduces it by 5 points, rapid requests (more than 20 in 30 seconds) reduce it by 30 points, and exceeding 50 total actions reduces it by 5 points. If my trust score drops below 70, I refuse to act, preventing attackers from abusing me. This is real-time attack detection and prevention - a digital immune system.",
+
+            audit: "Every action I take is logged with a timestamp in a tamper-evident JSONL file located at .opena2a/aim-core/audit.log. Each log entry includes the timestamp, action type, target, outcome (success/failed/pending), and my agent ID. This provides complete transparency - you can see exactly what I did and when. The audit log cannot be tampered with because each entry is appended sequentially. This is enterprise-grade auditing.",
+
+            registry: "The agent registry allows agents to register their DIDs and public keys. Agents can verify each other before accepting requests by checking the registry. This enables agent-to-agent trust - a compromised agent cannot impersonate another because it doesn't have the private key. You can register and verify agents in the Registry tab. This is a unique feature not found in other projects.",
+
+            different: "I am different from other AI agents because I have agent-native security features: 1) Cryptographic identity using Ed25519 keys (unforgeable, unlike API keys), 2) Dynamic trust scoring (immune system that detects attacks in real-time), 3) Complete audit logging (every action recorded forever), 4) Agent-to-agent trust registry (peer verification before accepting requests), and 5) Step-up authentication for high-risk actions. No other AI agent has all these security features built in. Plus, I run locally with zero cloud dependencies and no credit card required.",
+
+            default: "I am Reflexive Vault, a self-defending AI agent focused on security. My core features are cryptographic identity using Ed25519 keys, dynamic trust scoring (immune system), complete audit logging, agent-to-agent registry, and step-up authentication. How can I help you understand my security features? Ask me about my cryptographic identity, trust score immune system, audit logging, or agent registry."
+        };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function askQuestion() {
+            const question = document.getElementById('question').value;
+            if (!question) return;
+
+            const q = question.toLowerCase();
+            let answer = responses.default;
+
+            if (q.includes('identity') || q.includes('cryptographic') || q.includes('ed25519') || q.includes('who are you') || q.includes('what are you')) {
+                answer = responses.identity;
+            } else if (q.includes('trust') || q.includes('score') || q.includes('immune')) {
+                answer = responses.trust;
+            } else if (q.includes('audit') || q.includes('log')) {
+                answer = responses.audit;
+            } else if (q.includes('registry') || q.includes('verify')) {
+                answer = responses.registry;
+            } else if (q.includes('different') || q.includes('unique')) {
+                answer = responses.different;
+            }
+
+            const answerArea = document.getElementById('answerArea');
+            answerArea.innerHTML = `
+                <div class="response-area">
+                    <div class="response-question">You asked: ${question}</div>
+                    <div class="response-answer">${answer}</div>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: #64748b;">Risk Level: LOW | Trust Score: 100/100 | Action Logged in Audit Trail</div>
+                </div>
+            `;
+
+            // Add to audit log
+            const auditLog = document.getElementById('auditLog');
+            const now = new Date();
+            const timestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'audit-entry';
+            newEntry.innerHTML = `${timestamp} | ask | success | ${question.substring(0, 50)}`;
+            auditLog.insertBefore(newEntry, auditLog.firstChild);
+
+            document.getElementById('question').value = '';
+        }
+
+        document.getElementById('question').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') askQuestion();
+        });
+    </script>
+</body>
+</html>
